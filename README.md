@@ -12,10 +12,6 @@ Installing Node and NPM is pretty straightforward using the installer package av
 
 ### Configuring your project
 
-- Use NPM to initialize your project and create package.json to store project dependencies.
-```
-npm init
-```
 - Install crypto-js with --save flag to save dependency to our package.json file
 ```
 npm install crypto-js --save
@@ -25,7 +21,46 @@ npm install crypto-js --save
 npm install level --save
 ```
 
+## Files 
+
+#### classes files
+```
+-block.js : Class with a constructor for block
+```
+```
+-transaction.js : Class with a constructor for transaction  
+```
+```
+-mempool.js : Class with a constructor for MemPool
+```
+```
+- levelsandbox.js : Functions for leveldb persistence
+```
+```
+-blockminer.js : Class for block mining and PoW
+```
+```
+-blockchain.js : Class for blockchain basic functions
+```
+```
+-validateblockchain.js : Class with the methods for blockchain validation
+```
+#### Test files
+```
+-showblockchain.js : invoque for check the blokchain content
+```
+```
+-validateblockchain.js : Function for validate the blockchain consistency
+```
+```
+-testBlockchain.js : Function for run blockminet function. Every time that you invoque this function the system create 1o transactions, create the block and add 5 transactions, and invoque the miner block functions for add blocks to he blockchain using PoW.
+```
+```
+-testblockchainvalidation.js : Test for function validation, change the info in the last block and validate the blockchain consistency.
+```
+
 ## Testing
+Suggested list of commands for test the simplechain system
 
 To test code:
 1: Open a command prompt or shell terminal after install node.js.
@@ -34,28 +69,26 @@ To test code:
 node
 ```
 3: Copy and paste your code into your node session
-4: Instantiate blockchain with blockchain variable
+
 ```
-let blockchain = new Blockchain();
 ```
-5: Generate 10 blocks using a for loop
+4: Check the blockchain content
 ```
-for (var i = 0; i <= 10; i++) {
-  blockchain.addBlock(new Block("test data "+i));
-}
+Execute node showblockchain.js 
 ```
-6: Validate blockchain
+5: Populate the blockchain
 ```
-blockchain.validateChain();
+Execute node testBlockchain.js . Every time that you call this file, the system adds a block to the blockchain. The first time the system creates the genesis block. recommend execute almost 4 times (For create 4 blocks). Try to take almost 2 seconds between executions due avoid locks database in the database. In the case that databaselock error is showed, try another execution.
 ```
-7: Induce errors by changing block data
+6: try again the blockchain content
 ```
-let inducedErrorBlocks = [2,4,7];
-for (var i = 0; i < inducedErrorBlocks.length; i++) {
-  blockchain.chain[inducedErrorBlocks[i]].data='induced chain error';
-}
+Execute node showblockchain.js 
 ```
-8: Validate blockchain. The chain should now fail with blocks 2,4, and 7.
+7: Validate blockchain. 
 ```
-blockchain.validateChain();
+Execute node validateblockchain.js 
+```
+8: Test modifying the blockchain
+```
+Execute node testblockchainvalidation.js 
 ```
