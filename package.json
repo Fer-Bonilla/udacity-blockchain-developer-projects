@@ -1,6 +1,6 @@
 {
   "name": "simplechain",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Udacity private blockchain project",
   "main": "simpleChain.js",
   "dependencies": {

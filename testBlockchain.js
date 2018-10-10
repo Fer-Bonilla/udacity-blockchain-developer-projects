@@ -28,4 +28,3 @@ console.log('memPool transactions count: '+testPool.transactions.length);
 //------------------------------------------------------------
 
 testBlockMiner.mineBlock(testPool);
-//.then(() => {}).catch(error => console.log(error));;

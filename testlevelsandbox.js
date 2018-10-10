@@ -30,14 +30,8 @@ levelSandbox.getChainHeightData()
             testBlock.timestamp = new Date().getTime().toString().slice(0,-3);
             testBlock.hash = SHA256(JSON.stringify(testBlock)).toString();
 
-            levelSandbox.addLevelDBData(testBlock.height+1 ,  JSON.stringify(newBlock))
+            levelSandbox.addLevelDBData(testBlock.height+1 ,  JSON.stringify(testBlock))
             .then(result => console.log('Test addLevelDBData function: '+ result))
             .catch(error => console.log(error));
         });
     });
-
-
-
-//levelSandbox.getLevelDBData(levelSandbox.getChainHeightData().then(height => height))
-//   .then(result => console.log('Test getLevelDBData: '+ result))
-//   .catch(error => console.log(error));

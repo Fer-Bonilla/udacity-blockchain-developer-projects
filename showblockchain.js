@@ -7,11 +7,11 @@ const levelSandbox = require('./levelSandbox');
 levelSandbox.getBlockChainData()
   .then(chainData => {
     console.log('Testing get the data on the blockchain:' );
+    if(chainData.length > 0){
     for(blockid = 0; blockid < chainData.length; blockid++){
-        console.log('Block # '+blockid+' => '+chainData[blockid]);
+        console.log('Block # ['+blockid+'] block hash: ['+JSON.parse(chainData[blockid]).hash+'] DATA => ['+chainData[blockid]+']');
       }
     }
-    );
-
-levelSandbox.getChainHeightData()
-   .then(height => console.log('Testing getChainHeightData - Blockchain height: '+height));
+  else {console.log('Blockchain is empty');} 
+  }
+  );

@@ -35,7 +35,6 @@ class Blockchain{
 
       levelSandbox.getChainHeightData()
       .then(height => {
-        console.log('Testing getChainHeightData - Blockchain height: '+height)
         return height;
       });
 
