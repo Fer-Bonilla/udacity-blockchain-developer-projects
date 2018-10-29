@@ -16,7 +16,7 @@ class MemPool{
 
     // get the last transaction in the pool and delete from de MemPool
     getTransaction(){
-        if (this.transactions.length > 1){
+        if (this.transactions.length > 0){
             return (this.transactions.shift());
         }
         else{

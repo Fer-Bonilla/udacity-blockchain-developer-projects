@@ -24,6 +24,11 @@ app.get('/block/:height', async (request, response) => {
   try {
     levelSandbox.getLevelDBData(request.params.height).then(value => {
         response.send(JSON.parse(value));
+    }).catch(error => {
+        response.status(404).json({
+            "status": 404,
+            "message": "Bad index, block don't exist"
+          })
     });
   } catch (error) {
     response.status(404).json({
@@ -43,18 +48,20 @@ app.post('/block', async (request, response) => {
     })
   }
 
-  var transactions = request.body.transactions; 
-  var memPool = new memoryPool();
-  for (tx = 0; tx < transactions.length; tx++){
+var transactions = request.body.transactions; 
+var memPool = new memoryPool();
+
+//console.log("transactions => "+transactions.length)
+//console.log("memPool => "+memPool.length)
+
+for (tx = 0; tx < transactions.length; tx++){
     txn = new Transaction(transactions[tx].amount, transactions[tx].fromAdress, transactions[tx].toAdress);
+    //console.log(txn)
     memPool.addTransaction(txn);
-    }    
-  
-    webBlockMiner.mineBlock(memPool);
-
-  levelSandbox.getChainHeightData().then(height => {
-    response.status(201).send('Bloak added to the blockchain block height =>'+height);
+    //console.log("memPool Inside, Tx => "+memPool.transactions.length +" - "+tx)
+} 
+ 
+webBlockMiner.mineBlock(memPool).then(heightValue => {
+    response.status(201).send('Block added to the blockchain block height => '+heightValue);        
     });
-
-  
 })

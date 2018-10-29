@@ -18,6 +18,8 @@ for (i=0; i < 10; i++)
   console.log('Transaction #'+i+ ' - Content: ' + JSON.stringify(tx0x));
 }
 
+//console.log(JSON.stringify(testPool))
+
 console.log('memPool transactions count: '+testPool.transactions.length);
 
 //------------------------------------------------------------
@@ -27,4 +29,4 @@ console.log('memPool transactions count: '+testPool.transactions.length);
 //Is blockchain is not empty miner take transaction from the mempoool, validate the blockchain and add the block to the blockchain
 //------------------------------------------------------------
 
-testBlockMiner.mineBlock(testPool);
+var blockHeight = testBlockMiner.mineBlock(testPool);

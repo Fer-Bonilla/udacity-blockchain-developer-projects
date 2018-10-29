@@ -28,6 +28,22 @@ class Blockchain{
     }    
   }
 
+  addBlock(newBlock){
+    return new Promise((resolve, reject) => {
+        this.db.getChainHeightData().then(chainLength => {
+          if(newBlock.height >= 0 &&  newBlock.height > chainLength){
+            this.db.addLevelDBData(newBlock.height, JSON.stringify(newBlock)).then(() => { });
+          }
+        }).then({    }).then(saveOperationResult => {
+            console.log("block saved");
+            resolve(saveOperationResult);
+        }).catch(err => {
+            reject(new Error(`${err.message}`));
+        });
+    });
+}
+
+
   // Get block height
   getBlockHeight(){
 
