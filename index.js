@@ -41,27 +41,38 @@ app.get('/block/:height', async (request, response) => {
 // Criteria: POST Block endpoint 
 // using json transactions array in the post call -> http://localhost:8000/block
 app.post('/block', async (request, response) => {
-  if (request.body.transactions === '' || request.body.transactions === undefined) {
-    response.status(400).json({
-      "status": 400,
-      message: "Not Json transactions data"
-    })
-  }
+  
+    var transactions = request.body.transactions; 
+    var memPool = new memoryPool();
 
-var transactions = request.body.transactions; 
-var memPool = new memoryPool();
+    if (request.body.transactions === '' || request.body.transactions === undefined) {
+       
+        //check if the blockchain is empty
+        levelSandbox.getChainHeightData().then(height => {
+            if (height === -1) {
+                // Call the miner fro create the genesys block
+                webBlockMiner.mineBlock(memPool).then(heightValue => {
+                    response.status(201).send('Genesys Block added to the blockchain');        
+                });
+            } else {
+                response.status(201).send('No transactions in the message. Could not create blocks');        
+            }
+        });       
+       
+    } else{
 
-//console.log("transactions => "+transactions.length)
-//console.log("memPool => "+memPool.length)
-
-for (tx = 0; tx < transactions.length; tx++){
-    txn = new Transaction(transactions[tx].amount, transactions[tx].fromAdress, transactions[tx].toAdress);
-    //console.log(txn)
-    memPool.addTransaction(txn);
-    //console.log("memPool Inside, Tx => "+memPool.transactions.length +" - "+tx)
-} 
- 
-webBlockMiner.mineBlock(memPool).then(heightValue => {
-    response.status(201).send('Block added to the blockchain block height => '+heightValue);        
-    });
+        for (tx = 0; tx < transactions.length; tx++){
+            txn = new Transaction(transactions[tx].amount, transactions[tx].fromAdress, transactions[tx].toAdress);
+            memPool.addTransaction(txn);
+        } 
+        
+        if (memPool.transactions.length > 0) {
+            webBlockMiner.mineBlock(memPool).then(heightValue => {
+                response.status(201).send('Block added to the blockchain block height => '+heightValue);        
+            });
+        }
+        else{
+            response.status(201).send('No transactions in the message. Could not create blocks');  
+        }
+    }
 })
