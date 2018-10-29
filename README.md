@@ -20,6 +20,10 @@ npm install crypto-js --save
 ```
 npm install level --save
 ```
+- Install express resful framework
+```
+npm install express --save
+```
 
 ## Files 
 
@@ -44,6 +48,9 @@ npm install level --save
 ```
 ```
 -validateblockchain.js : Class with the methods for blockchain validation
+```
+```
+-index.js : Class with the Web API in express
 ```
 #### Test files
 ```
@@ -91,4 +98,28 @@ Execute node validateblockchain.js
 8: Test modifying the blockchain
 ```
 Execute node testblockchainvalidation.js 
+```
+
+## Using the web API with the blockchain
+1: Populate the blockchain
+```
+Execute node testBlockchain.js . Every time that you call this file, the system adds a block to the blockchain. The first time the system creates the genesis block. recommend execute almost 4 times (To create 4 blocks). Try to take almost 2 seconds between executions due avoid locks database. In the case that database-lock error, try another execution.
+```
+```
+2.: Run the express server 
+Execute node index.js
+```
+```
+3.: Search for a block in the blockchain
+In other terminal session execute curl -X "GET" "http://localhost:8000/block/0" with the block index at the end.
+```
+```
+4.: Add new block with the POST call
+Execute curl -X "POST" "http://localhost:8000/block" -H 'Content-Type: application/json' -d $'{"transactions":[{"amount":0,"fromAdress":"AA0","toAdress":"BB0"},{"amount":1,"fromAdress":"AA1","toAdress":"BB1"},{"amount":2,"fromAdress":"AA2","toAdress":"BB2"}]}'
+You can change the content of the transactions or add more transactions following thw json format.
+```
+```
+5.: View the new block content
+With the blockheigh returned in with the previous command (height) use in the next command considering the value returned
+curl -X "GET" "http://localhost:8000/block/{block height}"
 ```
