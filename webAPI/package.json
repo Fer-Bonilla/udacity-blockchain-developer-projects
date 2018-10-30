@@ -1,0 +1,36 @@
+{
+  "name": "simplechain",
+  "version": "1.0.4",
+  "description": "Udacity private blockchain project",
+  "main": "simpleChain.js",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "crypto-js": "^3.1.9-1",
+    "express": "^4.16.4",
+    "hapi": "^17.6.0",
+    "level": "^4.0.0",
+    "leveldown": "^4.0.1",
+    "levelup": "^3.1.1",
+    "test.js": "^1.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Fernando Bonilla",
+  "license": "MIT",
+  "keywords": [
+    "javascript",
+    "blockchain",
+    "project"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fer-Bonilla/blockchain-projects.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Fer-Bonilla/blockchain-projects/issues"
+  },
+  "homepage": "https://github.com/Fer-Bonilla/blockchain-projects#readme"
+}
