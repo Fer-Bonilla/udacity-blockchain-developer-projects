@@ -60,6 +60,7 @@ Execute node index.js
 2.: Create genesis block
 In other terminal session Execute curl -X "POST" "http://localhost:8000/block"
 ```
+![Screenshot](imagen1.jpg)
 ```
 3.: Search for a block in the blockchain
 In other terminal session execute curl -X "GET" "http://localhost:8000/block/0".
