@@ -27,9 +27,10 @@ npm install express --save
 - Install bitcoin-message library
 ```
 npm i bitcoinjs-message
+```
 
- ## Files 
-  #### classes files
+## Files 
+#### classes files
  ```
  -block.js : Class with a constructor for block
  ```
