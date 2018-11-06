@@ -1,6 +1,6 @@
- # Blockchain Data
+ # Blockchain Notary Service
  
- Blockchain has the potential to change the way that the world approaches data. Develop Blockchain skills by understanding the data model behind Blockchain by developing your own simplified private blockchain.
+Build a Private Blockchain Notary Service! This project implement a Star Registry service that allows users to claim ownership of their favorite star in the night sky.
  
  ## Getting Started
  
@@ -24,6 +24,10 @@ npm install level --save
 ```
 npm install express --save
 ```
+- Install bitcoin-message library
+```
+npm i bitcoinjs-message
+
  ## Files 
   #### classes files
  ```
@@ -36,7 +40,7 @@ npm install express --save
  -mempool.js : Class with a constructor for MemPool
  ```
  ```
- - levelsandbox.js : Functions for leveldb persistence
+ -dataLevel.js : Functions for leveldb persistence
  ```
  ```
  -blockminer.js : Class for block mining and PoW
@@ -49,6 +53,12 @@ npm install express --save
 ```
 ```
 -index.js : Class with the Web API in express
+```
+```
+-validate.js : Class with API functions for star Validation Calls
+```
+```
+-star.js : Class with the star info content
 ```
  
  ## Using the web API with the blockchain
@@ -65,11 +75,36 @@ In other terminal session Execute curl -X "POST" "http://localhost:8000/block"
 In other terminal session execute curl -X "GET" "http://localhost:8000/block/0".
 ```
 ```
-4.: Add new block with the POST call
-Execute curl -X "POST" "http://localhost:8000/block" -H 'Content-Type: application/json' -d $'{"body": "Testing block with test string data"}'
+4.: Make a request validation. ENDPOINT: http://localhost:8000/requestValidation
+Execute curl -X "POST" "http://localhost:8000/requestValidation" -H 'Content-Type: application/json' -d $'{"address": {use bitcoin address}"}'
 ```
 ```
-5.: View the new block content
-With the blockheigh returned in with the previous command (height) use in the next command considering the value returned
-curl -X "GET" "http://localhost:8000/block/1"
+5.: Message signature validation. ENDPOINT: http://localhost:8000/message-signature/validate
+Execute curl -X "POST" "http://localhost:8000/message-signature/validate" -H 'Content-Type: application/json' -d $'{
+  "address": "{use bitcoin address}",
+  "signature": "{Use a signature obtained with electrum wallet}"
+}'
+```
+```
+6.: Star Registration. ENDPOINT: http://localhost:8000/block
+Execute curl -X "POST" "http://localhost:8000/block" -H 'Content-Type: application/json' -d $'{
+  "address": "{Use a signature obtained with electrum wallet}",
+  "star": {
+    "dec": "-20° 50' 24.9''",
+    "ra": "22h 29m 37.0s",
+    "story": "Nice star between Aquarius and Piscis"
+  }
+}'
+```
+```
+7.: Get the block by heigth. ENDPOINT: http://localhost:8000/block/{heigth}
+Execute curl -X "GET" "http://localhost:8000/block/{heigth}" 
+```
+```
+8.: Get the block by address. ENDPOINT: http://localhost:8000/stars/address:{address}
+Execute curl -X "GET" "http://localhost:8000/stars/address:{address}" 
+```
+```
+9.: Get the block by hash. ENDPOINT: http://localhost:8000/stars/hash:{hash}
+Execute curl -X "GET" "http://localhost:8000/stars/hash:{hash}" 
 ```
