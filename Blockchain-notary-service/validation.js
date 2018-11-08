@@ -30,9 +30,14 @@ class validation {
     async registerRequestValidation(address4Register){
       try{
         return new Promise((resolve, reject) => {
-          const reqAddress = new addressClass(address4Register)
-          dbr.put(reqAddress.address, JSON.stringify(reqAddress))
-          return resolve(reqAddress)
+          if(address4Register.address !== '' || address4Register.address !== undefined){
+            const reqAddress = new addressClass(address4Register)
+            dbr.put(reqAddress.address, JSON.stringify(reqAddress))
+            return resolve(reqAddress)
+          }
+          else{
+            return reject("No address in the request!")
+          }
         })
       }
       catch(error){
@@ -112,7 +117,7 @@ class validation {
     try{
       dbr.del(address)
     }catch(error){
-      return error
+      throw new Error("Fail to delete request")
     }
   }
 
@@ -132,6 +137,44 @@ class validation {
     }catch(error){
      
     } 
+  }
+
+  validateStarcontent(starContent) {
+    let verification = true
+    
+    if (starContent !== '' || starContent !== undefined){
+      
+      if (starContent.address === '' || starContent.address === undefined) {
+        verification = false
+        throw new Error('Need to specify an address')
+      }
+      
+      if (starContent.star === '' || starContent.star === undefined) {
+        verification = false
+        throw new Error('Need to fill star info, is empty')
+      }
+
+      if (starContent.star.dec === undefined || starContent.star.ra === undefined || starContent.star.dec  === '' || starContent.star.ra === '') {
+        verification = false
+        throw new Error("Need to specify values for dec and ra")
+      }
+  
+      if (starContent.star.story === '' || starContent.star.story === undefined) {
+        verification = false
+        throw new Error("Need to specify value for story")
+      }
+
+      if (new Buffer(starContent.star.story).length > 500) {
+        verification = false
+        throw new Error('Story maximun long is 500 bytes')
+      }
+
+    }else{
+      verification = false
+      throw new Error("Request have not info, verify!")
+
+    }
+  return verification
   }
 
 }
