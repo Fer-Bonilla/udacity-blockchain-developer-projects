@@ -20,32 +20,12 @@ app.listen(8000, () => console.log('API listening on port 8000'))
 app.use(bodyParser.json())
 
 
-
-// Criteria: GET Block Endpoint. 
-// Use height parameter -> http://localhost:8000/block/{height}
-app.get('/block/:height', async (request, response) => {
-  try {
-    dataAccess.getBlockByHeigth(request.params.height).then(value => {
-        response.send(JSON.parse(value));
-    }).catch(error => {
-        response.status(404).json({
-            "status": 404,
-            "message": "Bad index, block don't exist"
-          })
-    });
-  } catch (error) {
-    response.status(404).json({
-      "status": 404,
-      "message": "Bad index, block don't exist"
-    })
-  }
-})
-
 //POST block registration
 //This method is a improvement over the methos used in the thow excercises before. This method can add transactions block or block with body content 
 //Using json transactions list or body information call -> http://localhost:8000/block'
 app.post('/block', async (request, response) => {
   
+  try{
     var transactions = request.body.transactions; 
     var bodycontent = request.body.body; 
     var addressContent = request.body.address; 
@@ -55,8 +35,8 @@ app.post('/block', async (request, response) => {
     let verified = false
     const starValidation = new validation()
 
-    if ((transactions === '' || transactions === undefined) && (bodycontent === '' || bodycontent === undefined) && (addressContent === '' || addressContent === undefined)) {
-       
+    //if ((transactions === '' || transactions === undefined) && (bodycontent === '' || bodycontent === undefined) && (addressContent === '' || addressContent === undefined) && (starContent === '' || starContent === undefined)) {
+    //if (bodycontent !== '' || bodycontent !== undefined) {       
         //check if the blockchain is empty
         dataAccess.getBlockchainHeight().then(height => {
             if (height === -1) {
@@ -64,12 +44,12 @@ app.post('/block', async (request, response) => {
                 webBlockMiner.mineBlock(memPool).then(heightValue => {
                     response.status(201).send('Genesys Block added to the blockchain');        
                 });
-            } else {
-                response.status(201).send('No transactions or body content in the message(2). Could not create blocks');        
-            }
+            } //else {
+              //  response.status(201).send('No transactions or body content in the message(2). Could not create blocks');        
+            //}
         });       
        
-    } else{
+    //} else{
         if (transactions !== '' && transactions !== undefined){
             for (tx = 0; tx < transactions.length; tx++){
                 txn = new Transaction(transactions[tx].amount, transactions[tx].fromAdress, transactions[tx].toAdress);
@@ -77,28 +57,28 @@ app.post('/block', async (request, response) => {
             } 
         }
             
-        if (memPool.transactions.length > 0 || bodycontent !== '' || bodycontent !== undefined || addressContent !== '' || addressContent !== undefined || starContent !== '' || starContent !== undefined ) {
+        if (memPool.transactions.length > 0 || bodycontent !== '' || bodycontent !== undefined || addressContent !== '' || addressContent !== undefined || starContent !== '' || starContent !== undefined) {
           
-          if(addressContent !== '' || addressContent !== undefined  && starContent !== '' || starContent !== undefined)
             //trying to register a star
-            if (addressContent !== '' && addressContent !== undefined){
+            bodycontent = new star(addressContent,starContent.ra, starContent.dec, starContent.story)
+            if(starValidation.validateStarcontent(bodycontent)){
               verified = await starValidation.validateAutorization(addressContent)
               if (!verified) {
                 throw new Error('star registration not authorized')
-              }else {
-                bodycontent = new star(addressContent,starContent.ra, starContent.dec, starContent.story)
+              }else { 
+                webBlockMiner.mineBlock(memPool,bodycontent).then(heightValue => {
+                  starValidation.deleteRequest(addressContent)
+                  response.status(201).send('Block added to the blockchain block height => '+heightValue);       
+                });
               }
             }
-          
-            //bodycontent = starContent
-            webBlockMiner.mineBlock(memPool,bodycontent).then(heightValue => {
-                response.status(201).send('Block added to the blockchain block height => '+heightValue);        
-            });
-        }
-        else{
-            response.status(201).send('No transactions or body in the message. Could not create blocks');  
-        }
     }
+  }
+  catch(error){
+    response.status(404).json({
+      status: 404,
+      message: error.message }) 
+  }
 })
 
 
@@ -107,21 +87,25 @@ app.post('/block', async (request, response) => {
   app.post('/requestValidation', async (request, response) => {
     try{
         const starValidation = new validation()  
-        //Validate if the address exists   
-        dataAddress = await starValidation.verifyRequest(request.body.address)
+        //Validate if the address exists
+        if (request.body.address !== '' && request.body.address !== undefined){   
+            dataAddress = await starValidation.verifyRequest(request.body.address)}
+        else {
+          throw new Error('Fill the address parameter')
+        }    
         
         // Address Request validation is not registered and the save to the validation request register
         if(dataAddress === undefined){
           dataAddress = await starValidation.registerRequestValidation(request.body.address)
           response.json(dataAddress)
         }else{
-          //Reauist Validation exists, update the windowtime value
+          //Request Validation exists, update the windowtime value
           dataAddress = await starValidation.updateRequestValidation(dataAddress)
           response.json(dataAddress)
         }
     }
     catch(error){
-        response.status(201).send('No request validation registered'); 
+        response.status(201).send(error.message); 
     }
   })
   
@@ -131,6 +115,13 @@ app.post('/block', async (request, response) => {
   app.post('/message-signature/validate', async (request, response) => {
     const starValidation = new validation(request)
     try {
+
+      if(request.body.address === '' || request.body.address === undefined)
+        throw new Error('Fill the address parameter')
+
+      if(request.body.signature === '' || request.body.signature === undefined)
+        throw new Error('Fill the signature parameter')        
+       
       const responseContent = await starValidation.verifySignature(request.body.address, request.body.signature)
   
       if (response.registerStar) {
