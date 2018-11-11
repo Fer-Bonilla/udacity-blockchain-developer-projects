@@ -1,105 +1,112 @@
+
+
+///@Project Criteria
+///contains tests for the following functions and all tests are approved without error.
+///createStar()
+///putStarUpForSale()
+///buyStar()
+///checkIfStarExist()
+///mint()
+///approve()
+///safeTransferFrom()
+///SetApprovalForAll()
+///getApproved()
+///isApprovedForAll()
+///ownerOf()
+///starsForSale()
+///tokenIdToStarInfo()
+
 const StarNotary = artifacts.require('StarNotary')
 
 contract('StarNotary', accounts => {
 
-  let user1 = accounts[0]
-  let user2 = accounts[1]
-
   let starId = 1
-  let starPrice = web3.toWei(.01, 'ether')
+  let starPrice = web3.toWei(0.1,'ether')
 
-  beforeEach(async function() {
-    this.contract = await StarNotary.new({ from: user1 })
-  }) 
-
-  it('can create a star and get its name', async function() {
-
-    await this.contract.createStar('Star power 103!', 'I love my wonderful star', 'ra_032.155', 'dec_121.874', 'mag_245.978', { from: user1 })
-
-    assert.deepEqual(await this.contract.tokenIdToStarInfo(1), ['Star power 103!', 'I love my wonderful star', 'ra_032.155', 'dec_121.874', 'mag_245.978'])
+  beforeEach(async function() { 
+    this.contract = await StarNotary.new({from: accounts[0]})
   })
 
-  it('user1 can put up their star for sale', async function() {
-    await this.contract.createStar('Star power 103!', 'I love my wonderful star', 'ra_032.155', 'dec_121.874', 'mag_245.978', { from: user1 })
-
-    assert.equal(await this.contract.ownerOf(starId), user1)
-    await this.contract.putStarUpForSale(starId, starPrice, { from: user1 })
-
-    assert.equal(await this.contract.starsForSale(starId), starPrice)
+  ///createStar() - tokenIdToStarInfo()
+  describe('can create a star - createStar() - tokenIdToStarInfo()', () => { 
+      it('can create a star and get its Info', async function () { 
+          await this.contract.createStar('Star power 103!', 'I love my wonderful star', 'ra_032.155', 'dec_121.874', 'mag_245.978', { from: accounts[0] })
+          assert.deepEqual(await this.contract.tokenIdToStarInfo(1), ['Star power 103!', 'I love my wonderful star', 'ra_032.155', 'dec_121.874', 'mag_245.978'])
+      })
   })
 
-  it('star exists', async function() {
-    await this.contract.createStar('Star power 103!', 'I love my wonderful star', 'ra_032.155', 'dec_121.874', 'mag_245.978', { from: user1 })
-
-    assert.equal(await this.contract.checkIfStarExist('ra_032.155', 'dec_121.874', 'mag_245.978'), true)
+  ///putStarUpForSale() - starsForSale()
+  describe('User can sell their Star - putStarUpForSale() - starsForSale()', () => { 
+    it('user can put their star for sale', async function() {
+      await this.contract.createStar('Star power 103!', 'I love my wonderful star', 'ra_032.155', 'dec_121.874', 'mag_245.978', { from: accounts[0] })
+      assert.equal(await this.contract.ownerOf(starId), accounts[0])
+      await this.contract.putStarUpForSale(starId, starPrice, { from: accounts[0] })
+      assert.equal(await this.contract.starsForSale(starId), starPrice)
+    })
   })
 
-  it('token belong to the right owner', async function() {
-    await this.contract.mint(starId, { from: user1 })
-
-    let owner = await this.contract.ownerOf(1, { from: user1 })
-    assert.equal(owner, user1)
+  ///buyStar()
+  describe('Users can buy a Star - buyStar()', () => { 
+    it('user buy a Star', async function() {
+      await this.contract.createStar('Star power 103!', 'I love my wonderful star', 'ra_032.155', 'dec_121.874', 'mag_245.978', { from: accounts[0] })
+      await this.contract.putStarUpForSale(starId, starPrice, { from: accounts[0] })
+      await this.contract.buyStar(starId, { from: accounts[2], value: starPrice, gasPrice: 0 })
+      assert.equal(await this.contract.ownerOf(starId), accounts[2])
+    })
   })
 
-  it('star has correct owner after created', async function() {
-    await this.contract.createStar('Star power 103!', 'I love my wonderful star', 'ra_032.155', 'dec_121.874', 'mag_245.978', { from: user1 })
-
-    const starOwner = await this.contract.ownerOf(1, { from: user1 })
-
-    assert.equal(starOwner, user1)
+  ///checkIfStarExist()
+  describe('can verify Star registration - checkIfStarExist()', () => { 
+    it('star is registered', async function () { 
+      await this.contract.createStar('Star power 103!', 'I love my wonderful star', 'ra_032.155', 'dec_121.874', 'mag_245.978', { from: accounts[0] })
+      assert.equal(await this.contract.checkIfStarExist('ra_032.155', 'dec_121.874', 'mag_245.978'), true)
+      })
   })
 
-  it('user2 is the owner of the star after they buy it', async function() {
-    await this.contract.createStar('Star power 103!', 'I love my wonderful star', 'ra_032.155', 'dec_121.874', 'mag_245.978', { from: user1 })
-
-    await this.contract.putStarUpForSale(starId, starPrice, { from: user1 })
-
-    await this.contract.buyStar(starId, { from: user2, value: starPrice, gasPrice: 0 })
-    assert.equal(await this.contract.ownerOf(starId), user2)
+  ///mint()
+  describe('Can verify mint function - mint()', () => { 
+    it('StarToken belong to the right owner', async function() {
+      await this.contract.mint(starId, { from: accounts[0] })
+      let starOwner = await this.contract.ownerOf(1, { from: accounts[0] })
+      assert.equal(starOwner, accounts[0])
+    })
   })
 
-  it('user2 ether balance changed correctly', async function() {
-    await this.contract.createStar('Star power 103!', 'I love my wonderful star', 'ra_032.155', 'dec_121.874', 'mag_245.978', { from: user1 })
-
-    await this.contract.putStarUpForSale(starId, starPrice, { from: user1 })
-
-    let overpaidAmount = web3.toWei(.05, 'ether')
-    const balanceBeforeTransaction = web3.eth.getBalance(user2)
-    await this.contract.buyStar(starId, { from: user2, value: overpaidAmount, gasPrice: 0 })
-    const balanceAfterTransaction = web3.eth.getBalance(user2)
-
-    assert.equal(balanceBeforeTransaction.sub(balanceAfterTransaction), starPrice)
+  ///approve() - getApproved()
+  describe('Balance transfer verification and transaction aprroval - approve() - getApproved()', () => { 
+    it('approve address', async function() {
+      await this.contract.createStar('Star power 103!', 'I love my wonderful star', 'ra_032.155', 'dec_121.874', 'mag_245.978', { from: accounts[0] })
+      await this.contract.approve(accounts[1], starId, { from: accounts[0] })
+      assert.equal(await this.contract.getApproved(starId, { from: accounts[0] }), accounts[1])
+    })
   })
 
-  it('approve address', async function() {
-    await this.contract.createStar('Star power 103!', 'I love my wonderful star', 'ra_032.155', 'dec_121.874', 'mag_245.978', { from: user1 })
-
-    await this.contract.approve(user2, starId, { from: user1 })
-
-    assert.equal(await this.contract.getApproved(starId, { from: user1 }), user2)
+  ///safeTransferFrom()
+  describe('Verify safe transfer - safeTransferFrom()', () => { 
+    it('user is the star owner', async function() {
+      await this.contract.createStar('Star power 103!', 'I love my wonderful star', 'ra_032.155', 'dec_121.874', 'mag_245.978', { from: accounts[0] })
+      await this.contract.safeTransferFrom(accounts[0], accounts[1], starId)
+      assert.equal(await this.contract.ownerOf(starId, { from: accounts[0] }), accounts[1])
+    })
   })
 
-  it('approve all address', async function() {
-    await this.contract.createStar('Star power 103!', 'I love my wonderful star', 'ra_032.155', 'dec_121.874', 'mag_245.978', { from: user1 })
-    await this.contract.setApprovalForAll(user2, starId)
 
-    assert.equal(await this.contract.isApprovedForAll(user1, user2, { from: user1 }), true)
+  ///SetApprovalForAll() - isApprovedForAll()
+  describe('Verifiy address approvals - SetApprovalForAll() - isApprovedForAll()', () => { 
+    it('approve all address', async function() {
+      await this.contract.createStar('Star power 103!', 'I love my wonderful star', 'ra_032.155', 'dec_121.874', 'mag_245.978', { from: accounts[0] })
+      await this.contract.setApprovalForAll(accounts[1], starId)
+      assert.equal(await this.contract.isApprovedForAll(accounts[0], accounts[1], { from: accounts[0] }), true)
+    })
   })
 
-  // ownerOf test
-  it('user is the star owner', async function() {
-    await this.contract.createStar('Star power 103!', 'I love my wonderful star', 'ra_032.155', 'dec_121.874', 'mag_245.978', { from: user1 })
-    await this.contract.safeTransferFrom(user1, user2, starId)
-
-    assert.equal(await this.contract.ownerOf(starId, { from: user1 }), user2)
-  })
-
-  // ownerOf test
-  it('user is no more the star owner', async function() {
-    await this.contract.createStar('Star power 103!', 'I love my wonderful star', 'ra_032.155', 'dec_121.874', 'mag_245.978', { from: user1 })
-    await this.contract.safeTransferFrom(user1, user2, starId)
-
-    assert.notEqual(await this.contract.ownerOf(starId, { from: user1 }), user1)
+  ///ownerOf()
+  describe('Right Star Ownership after creation - ownerOf()', () => { 
+    it('star has correct owner after created', async function() {
+      await this.contract.createStar('Star power 103!', 'I love my wonderful star', 'ra_032.155', 'dec_121.874', 'mag_245.978', { from: accounts[0] })
+      const starOwner = await this.contract.ownerOf(1, { from: accounts[0] })
+      assert.equal(starOwner, accounts[0])
+    })
   })
 
 })
