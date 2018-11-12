@@ -1,5 +1,3 @@
-
-
 ///@Project Criteria
 ///contains tests for the following functions and all tests are approved without error.
 ///createStar()
