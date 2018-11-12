@@ -1,6 +1,6 @@
 pragma solidity ^0.4.24;
 
-import '../node_modules/openzeppelin-solidity/contracts/token/ERC721/ERC721.sol';
+import "../node_modules/openzeppelin-solidity/contracts/token/ERC721/ERC721.sol";
 
 /// @title StarNotary, Stars registration with Ethereum smart contracts
 /// @notice Use this contracts only for basic functions
