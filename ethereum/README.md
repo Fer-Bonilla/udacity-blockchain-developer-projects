@@ -69,6 +69,8 @@ To deploy the contract in the Rinkeby public test network was used the command:
 
 $ truffle migrate --network rinkeby --reset --compile-all
 
+![migrate-result](https://user-images.githubusercontent.com/33405407/48361918-806aab00-e670-11e8-973d-4dcd1b424d2a.png)
+
 
 ## Infura service
 
@@ -83,3 +85,5 @@ https://rinkeby.etherscan.io/address/0xec2764593ebb15a6664030326cb75b1d5bc0f810
 1
 
 ## Star registration 
+
+![cliente-example](https://user-images.githubusercontent.com/33405407/48361988-a2fcc400-e670-11e8-9233-cdd7a568095d.png)
