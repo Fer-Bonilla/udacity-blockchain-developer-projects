@@ -16,12 +16,11 @@ Part4 - Modify the web3 client to interact with the smartcontract
 
 # Getting Started
  
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes, and process
-to deploy in the Rinkeby public test network.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes, and process to deploy in the Rinkeby public test network.
 
 ## Prerequisites
  
- Installing Node and NPM is pretty straightforward using the installer package available from the (Node.js® web site)[https://nodejs.org/en/].
+ Installing Node and NPM is pretty straightforward using the installer package available from https://nodejs.org/en/.
  
 ## Configuring your project Locallly
 
@@ -47,6 +46,9 @@ Truffle compile
 ### Test the SmartContract
 
 Truffle test
+
+![test-result](https://user-images.githubusercontent.com/33405407/48361723-1b16ba00-e670-11e8-9efc-cfd710acc36b.png)
+
 
 ### Migrate the smartcontract in the local Ganache Test Network
 
