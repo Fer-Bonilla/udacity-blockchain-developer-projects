@@ -10,7 +10,8 @@ Learn the basics of how the blockchain data model works by creating your own pri
 
   *Projec:* Create Your Own Private Blockchain
       Create your own private blockchain as you learn to architect a blockchain data model. Your focus will be on the development of a private chain of blocks which is cryptographically secure and immutable.
-  project link: [Private blockchain with javascript]
+
+project link: [Private blockchain with javascript]
 
 
 ## 2. Ethereum Smart Contracts, Tokens and Dapps. Advance your blockchain skillset to the second generation of blockchain services with smart contracts utilizing the Ethereum network.
