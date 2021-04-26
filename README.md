@@ -2,7 +2,7 @@
 
 Repository for Udacity's Blockchain Developer Nanodegree. You can learn the fundamentals of the blockchain platform. Create your own private blockchain, and secure a digital asset using blockchain identity.
 
-#Course program
+# Course program
 
 ## 1. Blockchain Fundamentals
 
